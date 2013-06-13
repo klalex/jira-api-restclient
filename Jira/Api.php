@@ -55,6 +55,9 @@ class Jira_Api
     /** @var array $status */
     protected $statuses;
 
+    /** @var array $project */
+    protected $projects;
+
     /**
      * create a jira api client.
      *
@@ -343,7 +346,26 @@ class Jira_Api
     	);
     	return $this->api(self::REQUEST_POST, "/rest/api/2/issue/" . $issue . "/attachments", $options, false ,TRUE);
     }
-    
+
+    /**
+     * get JIRA projects
+     *
+     * @return mixed
+     */
+    public function getProjects()
+    {
+        if (!count($this->projects)) {
+            $projects  = array();
+            $result = $this->api(self::REQUEST_GET, "/rest/api/2/project", array());
+            /* set hash key as custom field id */
+            foreach($result->getResult() as $k => $v) {
+                $projects[$v['id']] = $v;
+            }
+            $this->projects= $projects;
+        }
+        return $this->projects;
+    }
+
     /**
      * send request to specified host
      *
